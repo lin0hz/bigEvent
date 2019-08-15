@@ -141,7 +141,7 @@
                         <td>{{v.slug}}</td>
                         <td class="text-center">
                             <a href="javascript:editTr({&quot;id&quot;:&quot;1&quot;,&quot;slug&quot;:&quot;uncategorized&quot;,&quot;name&quot;:&quot;未分类&quot;});" class="btn btn-info btn-xs">编辑</a>
-                            <a data-id={{v.id}} href="#" class="btn btn-danger btn-xs">删除</a>
+                            <a data-id={{v.id}} href="#" class="btn btn-danger btn-xs btn-delete">删除</a>
                         </td>
                     </tr>
     {{/each}}
@@ -159,7 +159,7 @@
                 }
             })
         }
-        //获取所有文章类别
+        //一进到页面,显示所有文章类别
         getData();
 
         //新增分类点击事件
@@ -191,6 +191,29 @@
             //隐藏模态框
             $('#addModal').modal('hide');
         });
+
+        //删除分类点击事件-->委托注册
+        $('tbody').on('click', '.btn-delete', function () {
+            var id = $(this).attr('data-id');
+            var that=$(this);
+            if (confirm('你确定要删除吗?')) {
+                $.ajax({
+                    type: 'post',
+                    url: 'http://127.0.0.1:8080/admin/category/delete',
+                    data: {
+                        id: id
+                    },
+                    success: function (backData) {
+                        if (backData.code == 204) {
+                            //重新渲染数据
+                            getData();
+                            //移除DOM 
+                            // that.parent().parent().remove();
+                        }
+                    }
+                })
+            }
+        })
 
     })
 </script>
