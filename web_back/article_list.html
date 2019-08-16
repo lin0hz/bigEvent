@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="css/iconfont.css">
     <link rel="stylesheet" href="css/main.css">
     <script src="js/jquery-1.12.4.min.js"></script>
+    <script src="./js/jquery.twbsPagination.js"></script>
 </head>
 
 <body>
@@ -314,15 +315,34 @@
             }
         }
     })
+    function getData(myPage){
+        $.ajax({
+            url: 'http://127.0.0.1:8080/admin/article/query',
+            data: {             
+                page: myPage,
+                perpage: 5
+            },
+            success: function (backData) {
+                console.log(backData);
+                if (backData.code == 200) {
+                    var resHtml = template('articleList', backData);
+                    $('tbody').html(resHtml);
+                }
+
+            }
+        })
+    }
+    //需求:页面一加载显示第一页
+    getData(1);
+    //$('#btnSearch').trigger('click');
 
     //需求:点击筛选按钮,筛选出符合条件的文章,渲染到页面
     $('#btnSearch').on('click', function (e) {
-        e.preventDefault();
+        e.preventDefault();     
         var cateType = $('#selCategory').val().trim();
         var cateState = $('#selStatus').val().trim();
-        console.log(cateType,cateState);
-        
-        $.ajax({           
+        console.log(cateType, cateState);
+        $.ajax({
             url: 'http://127.0.0.1:8080/admin/article/query',
             data: {
                 type: cateType,
@@ -331,7 +351,7 @@
                 perpage: 5
             },
             success: function (backData) {
-                console.log(backData);               
+                console.log(backData);
                 if (backData.code == 200) {
                     var resHtml = template('articleList', backData);
                     $('tbody').html(resHtml);
@@ -339,9 +359,21 @@
 
             }
         })
-
     })
 
-    
+    //需求:分页
+    $('.pagination').twbsPagination({
+        totalPages: 45, //总页数
+        visiblePages: 5, //可见页签数
+        //什么时候执行这个方法. 单击页签的时候会触发
+        onPageClick: function (event, page) {     
+            console.log(event);//点击的触发事件
+            console.log(page); //当前点击的页签的页码数.
+            getData(page);
+            
+        }
+    });
+
+
 
 </script>
