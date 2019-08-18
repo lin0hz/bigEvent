@@ -177,6 +177,9 @@
                     success: function (backData) {
                         if(backData.code==200){
                             getData();
+                            //清空输入框
+                            var cateName = $('#recipient-name').val("");
+                            var cateSlug = $('#recipient-slug').val("");
                         }
                         
                     }
