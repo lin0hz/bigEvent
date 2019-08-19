@@ -208,3 +208,14 @@
 </body>
 
 </html>
+<script>
+    var id=window.location.search.split('=')[1];
+    $.ajax({
+        url:'http://127.0.0.1:8080/index/article',
+        success:function(backData){
+            if(backData.code==200){
+                
+            }
+        }
+    })
+</script>
