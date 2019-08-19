@@ -297,8 +297,8 @@
         <td class="text-center">{{v.date}}</td>
         <td class="text-center">{{v.state}}</td>
         <td class="text-center">
-            <a href="article_edit.html" class="btn btn-default btn-xs">编辑</a>
-            <a data-id={{v.id}} href="#" class="btn btn-danger btn-xs">删除</a>
+            <a href="article_edit.html?id={{v.id}}" class="btn btn-default btn-xs">编辑</a>
+            <a data-id={{v.id}} href="#" class="btn btn-danger btn-xs btn-delete">删除</a>
         </td>
     </tr>
 {{/each}}
@@ -333,12 +333,13 @@
                 if (backData.code == 200) {
                     console.log(backData);
                     var resHtml = template('articleList', backData);
-                    $('tbody').html(resHtml); 
+                    $('tbody').html(resHtml);
                     //根据ajax请求获取总页数,再重新绘制总页码条数
-                    var totalPages = backData.data.totalPage;            
-                    if (totalPages != myTotalPage||isTrue==true) {
-                        myTotalPage=totalPages;                   
-                        var currentPage = $pagination.twbsPagination('getCurrentPage');//获取当前页
+                    var totalPages = backData.data.totalPage;
+                    window.currentPage = $pagination.twbsPagination('getCurrentPage');//获取当前页           
+                    if (totalPages != myTotalPage || isTrue == true) {
+                        myTotalPage = totalPages;
+
                         $pagination.twbsPagination('destroy');
                         $pagination.twbsPagination($.extend({}, defaultOpts, {
                             startPage: 1,//始终以第一页作为开始页
@@ -346,7 +347,7 @@
                         }));
                     }
                     //进来执行完,isTrue要还原成false
-                    isTrue=false;
+                    isTrue = false;
                 }
             }
         })
@@ -355,14 +356,15 @@
     //getData(1);
     //$('#btnSearch').trigger('click');
 
-    var isTrue=false;
+
+    var isTrue = false;
     //需求:点击筛选按钮,筛选出符合条件的文章,渲染到页面
     $('#btnSearch').on('click', function (e) {
         e.preventDefault();
-        isTrue=true;
+        isTrue = true;
         cateType = $('#selCategory').val();
         cateState = $('#selStatus').val();
-        getData(1,cateType,cateState)
+        getData(1, cateType, cateState)
     })
 
 
@@ -370,10 +372,10 @@
     //需求:分页-->动态总页数
     var $pagination = $('.pagination');
     var defaultOpts = {
-        first:'首页',
-        prev:'上一页',
-        next:'下一页',
-        last:'末页',
+        first: '首页',
+        prev: '上一页',
+        next: '下一页',
+        last: '末页',
         totalPages: myTotalPage,//总页数
         visiblePages: 5, //可见页签数
         //什么时候执行这个方法. 单击页签的时候会触发
@@ -384,6 +386,26 @@
         }
     };
     $pagination.twbsPagination(defaultOpts);
+
+
+    //需求:删除
+    $('tbody').on('click', '.btn-delete', function () {
+        var id = $(this).attr('data-id');
+        if (confirm('你确定要删除吗?')) {
+            $.ajax({
+                url: 'http://127.0.0.1:8080/admin/article/delete',
+                data: {
+                    id: id
+                },
+                success: function (backData) {
+                    if (backData.code == 204) {
+                        getData(currentPage, cateType, cateState);
+                    }
+                }
+            })
+        }
+
+    })
 
 
 
