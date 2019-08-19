@@ -228,14 +228,14 @@
 <script src="./js/template-web.js"></script>
 <script id="focusNews" type="text/html">
     {{each data.data}}
-    {{if $index==0}}
-        <li class="first">
+        {{if $index==0}}
+             <li class="first">
         {{else}}
-        <li>
-    {{/if}}
-            <a href="#"><img src="{{$value.cover}}" alt=""></a>
+            <li>
+        {{/if}}
+            <a href="article.html?id={{$value.id}}"><img src="{{$value.cover}}" alt=""></a>
             <p>{{$value.title}}</p>
-        </li>
+            </li>
     {{/each}}
 </script>
 <script>
